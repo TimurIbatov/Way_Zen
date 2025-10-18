@@ -130,7 +130,7 @@ export default function HomePage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Опишите вашу задачу"
+                placeholder={t("chat.placeholder")}
                 className="w-full bg-transparent text-white/90 placeholder:text-white/40 text-3xl px-4 py-6 pr-20 border-0 border-white/30 outline-none caret-white focus:border-white/50 transition-colors text-center"
               />
               <button
