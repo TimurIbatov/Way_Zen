@@ -11,8 +11,7 @@ import { Input } from "@/components/ui/input"
 import { storage } from "@/lib/storage"
 import { useAuth } from "@/lib/hooks/use-auth"
 import { useLanguage } from "@/lib/hooks/use-language"
-
-const UZBEK_CITIES = ["Ташкент", "Самарканд", "Бухара", "Хива", "Фергона", "Коканд", "Шахрисабз"]
+import { CITY_KEYS, getCityTranslation, CITY_REVERSE_MAPPING } from "@/lib/cities"
 
 export default function ToursPage() {
   const router = useRouter()
@@ -88,6 +87,42 @@ export default function ToursPage() {
     </Card>
   )
 
+  const CityFilters = () => (
+    <div className="space-y-3">
+      <h3 className="text-white font-semibold text-center">{t("tours.filterByCity")}</h3>
+      <div className="flex flex-wrap gap-2 justify-center">
+        <Button
+          onClick={() => setSelectedCity(null)}
+          variant={selectedCity === null ? "default" : "outline"}
+          className={
+            selectedCity === null
+              ? "bg-teal-500 hover:bg-teal-600"
+              : "bg-slate-800/60 border-slate-700 text-gray-300 hover:bg-slate-700"
+          }
+        >
+          {t("tours.allCities")}
+        </Button>
+        {CITY_KEYS.map((cityKey) => {
+          const cityNameInDb = CITY_REVERSE_MAPPING[cityKey]
+          return (
+            <Button
+              key={cityKey}
+              onClick={() => setSelectedCity(cityNameInDb)}
+              variant={selectedCity === cityNameInDb ? "default" : "outline"}
+              className={
+                selectedCity === cityNameInDb
+                  ? "bg-teal-500 hover:bg-teal-600"
+                  : "bg-slate-800/60 border-slate-700 text-gray-300 hover:bg-slate-700"
+              }
+            >
+              {getCityTranslation(cityKey, t)}
+            </Button>
+          )
+        })}
+      </div>
+    </div>
+  )
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-teal-900/20">
       <VerticalNav />
@@ -124,36 +159,7 @@ export default function ToursPage() {
                 </div>
 
                 {/* City Filter */}
-                <div className="space-y-3">
-                  <h3 className="text-white font-semibold text-center">{t("tours.filterByCity")}</h3>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    <Button
-                      onClick={() => setSelectedCity(null)}
-                      variant={selectedCity === null ? "default" : "outline"}
-                      className={
-                        selectedCity === null
-                          ? "bg-teal-500 hover:bg-teal-600"
-                          : "bg-slate-800/60 border-slate-700 text-gray-300 hover:bg-slate-700"
-                      }
-                    >
-                      {t("tours.allCities")}
-                    </Button>
-                    {UZBEK_CITIES.map((city) => (
-                      <Button
-                        key={city}
-                        onClick={() => setSelectedCity(city)}
-                        variant={selectedCity === city ? "default" : "outline"}
-                        className={
-                          selectedCity === city
-                            ? "bg-teal-500 hover:bg-teal-600"
-                            : "bg-slate-800/60 border-slate-700 text-gray-300 hover:bg-slate-700"
-                        }
-                      >
-                        {city}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
+                <CityFilters />
               </div>
 
               {/* Tours Grid */}
@@ -168,7 +174,7 @@ export default function ToursPage() {
               </div>
             </TabsContent>
 
-            {/* All Tours Tab - New section for all tours from database */}
+            {/* All Tours Tab */}
             <TabsContent value="all" className="space-y-6 mt-6">
               <div className="max-w-2xl mx-auto space-y-4">
                 <div className="relative">
@@ -181,36 +187,7 @@ export default function ToursPage() {
                   />
                 </div>
 
-                <div className="space-y-3">
-                  <h3 className="text-white font-semibold text-center">{t("tours.filterByCity")}</h3>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    <Button
-                      onClick={() => setSelectedCity(null)}
-                      variant={selectedCity === null ? "default" : "outline"}
-                      className={
-                        selectedCity === null
-                          ? "bg-teal-500 hover:bg-teal-600"
-                          : "bg-slate-800/60 border-slate-700 text-gray-300 hover:bg-slate-700"
-                      }
-                    >
-                      {t("tours.allCities")}
-                    </Button>
-                    {UZBEK_CITIES.map((city) => (
-                      <Button
-                        key={city}
-                        onClick={() => setSelectedCity(city)}
-                        variant={selectedCity === city ? "default" : "outline"}
-                        className={
-                          selectedCity === city
-                            ? "bg-teal-500 hover:bg-teal-600"
-                            : "bg-slate-800/60 border-slate-700 text-gray-300 hover:bg-slate-700"
-                        }
-                      >
-                        {city}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
+                <CityFilters />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -262,38 +239,4 @@ export default function ToursPage() {
             </TabsContent>
 
             {/* History Tab */}
-            <TabsContent value="history" className="space-y-6 mt-6">
-              <div className="space-y-4 max-w-2xl mx-auto">
-                {tourHistory.length > 0 ? (
-                  tourHistory.map((history) => (
-                    <Card key={history.id} className="bg-slate-800/60 backdrop-blur-lg border-slate-700 p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-semibold text-white">Tour #{history.tourId.slice(-4)}</h3>
-                          <p className="text-sm text-gray-400">
-                            {new Date(history.completedAt).toLocaleDateString("ru-RU")}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-yellow-400 font-semibold">★ {history.rating}</div>
-                          <div className="text-teal-400 text-sm">
-                            {t("tours.spent")}: ${history.totalSpent}
-                          </div>
-                        </div>
-                      </div>
-                      {history.notes && <p className="text-gray-300 text-sm mt-2">{history.notes}</p>}
-                    </Card>
-                  ))
-                ) : (
-                  <div className="text-center py-12">
-                    <p className="text-gray-400">{t("tours.emptyHistory")}</p>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
-    </div>
-  )
-}
+            <TabsContent value="history" className="space-y-6
