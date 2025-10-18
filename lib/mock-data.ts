@@ -53,3 +53,7 @@ export function getCategoriesWithTranslations(t: (key: string) => string): Categ
     name: t(`categories.${cat.id}`),
   }))
 }
+
+// Оставляем пустые массивы для совместимости (данные берутся из storage.ts)
+export const mockTours: any[] = []
+export const mockPlaces: any[] = []
