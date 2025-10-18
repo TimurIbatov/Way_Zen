@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowLeft, User, Mail, Heart, MessageSquare, LogOut, Info } from "lucide-react"
 import { useAuth } from "@/lib/hooks/use-auth"
 import { useFavorites } from "@/lib/hooks/use-favorites"
-import { categories } from "@/lib/mock-data"
+import { getCategoriesWithTranslations } from "@/lib/mock-data"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/lib/hooks/use-language"
@@ -23,6 +23,7 @@ export default function ProfilePage() {
     router.push("/")
   }
 
+  const categories = getCategoriesWithTranslations(t)
   const userCategories = categories.filter((cat) => user?.interests.includes(cat.id))
 
   return (
@@ -68,7 +69,7 @@ export default function ProfilePage() {
                 <div className="text-center space-y-2">
                   <Heart className="h-8 w-8 text-teal-400 mx-auto" />
                   <p className="text-3xl font-bold text-white">{favorites.length}</p>
-                  <p className="text-sm text-gray-400">Избранных</p>
+                  <p className="text-sm text-gray-400">{t("favorites.places")}</p>
                 </div>
               </CardContent>
             </Card>
@@ -77,7 +78,7 @@ export default function ProfilePage() {
                 <div className="text-center space-y-2">
                   <MessageSquare className="h-8 w-8 text-cyan-400 mx-auto" />
                   <p className="text-3xl font-bold text-white">{userCategories.length}</p>
-                  <p className="text-sm text-gray-400">Интересов</p>
+                  <p className="text-sm text-gray-400">{t("onboarding.selectInterests")}</p>
                 </div>
               </CardContent>
             </Card>
@@ -86,19 +87,19 @@ export default function ProfilePage() {
           {/* Interests */}
           <Card className="bg-slate-800/40 backdrop-blur-lg border-slate-700">
             <CardHeader>
-              <CardTitle className="text-white">Ваши интересы</CardTitle>
-              <CardDescription className="text-gray-400">Категории, которые вас интересуют</CardDescription>
+              <CardTitle className="text-white">{t("onboarding.selectInterests")}</CardTitle>
+              <CardDescription className="text-gray-400">{t("onboarding.selectOneOrMore")}</CardDescription>
             </CardHeader>
             <CardContent>
               {userCategories.length === 0 ? (
                 <div className="text-center py-8 space-y-4">
-                  <p className="text-gray-400">Вы еще не выбрали интересы</p>
+                  <p className="text-gray-400">{t("onboarding.selectOneOrMore")}</p>
                   <Button
                     asChild
                     variant="outline"
                     className="bg-slate-700/60 border-slate-600 text-white hover:bg-slate-600"
                   >
-                    <Link href="/onboarding">Выбрать интересы</Link>
+                    <Link href="/onboarding">{t("onboarding.selectInterests")}</Link>
                   </Button>
                 </div>
               ) : (
@@ -120,7 +121,7 @@ export default function ProfilePage() {
                     variant="outline"
                     className="w-full bg-slate-700/60 border-slate-600 text-white hover:bg-slate-600"
                   >
-                    <Link href="/onboarding">Изменить интересы</Link>
+                    <Link href="/onboarding">{t("onboarding.selectInterests")}</Link>
                   </Button>
                 </div>
               )}
