@@ -20,6 +20,7 @@ import { useCart } from "@/lib/hooks/use-cart"
 import { MobileNav } from "@/components/mobile-nav"
 import type { Place, Tour } from "@/lib/types"
 import { calculateTripCost } from "@/lib/cost-calculator"
+import { CITY_KEYS, getCityTranslation, CITY_REVERSE_MAPPING } from "@/lib/cities"
 
 class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean }> {
   state = { hasError: false }
@@ -51,7 +52,6 @@ export default function MapPage() {
   const [viewMode, setViewMode] = useState<"list" | "map" | "calculator">("list")
   const [showCreateTourModal, setShowCreateTourModal] = useState(false)
   const [tourName, setTourName] = useState("")
-  const cities = ["Ташкент", "Самарканд", "Бухара", "Хива", "Фергона", "Коканд", "Шахрисабз"]
   const [selectedCity, setSelectedCity] = useState<string | null>(null)
 
   useEffect(() => {
@@ -220,7 +220,7 @@ export default function MapPage() {
                 ))}
               </div>
 
-              {/* City filters - Centered and fixed */}
+              {/* City filters - Centered with translations */}
               <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2">
                 <Button
                   variant={selectedCity === null ? "default" : "outline"}
@@ -234,21 +234,24 @@ export default function MapPage() {
                 >
                   {t("map.all")}
                 </Button>
-                {cities.map((city) => (
-                  <Button
-                    key={city}
-                    variant={selectedCity === city ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedCity(city)}
-                    className={
-                      selectedCity === city
-                        ? "bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600"
-                        : "bg-slate-800/60 border-slate-700 text-gray-300 hover:bg-slate-700"
-                    }
-                  >
-                    {city}
-                  </Button>
-                ))}
+                {CITY_KEYS.map((cityKey) => {
+                  const cityNameInDb = CITY_REVERSE_MAPPING[cityKey]
+                  return (
+                    <Button
+                      key={cityKey}
+                      variant={selectedCity === cityNameInDb ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedCity(cityNameInDb)}
+                      className={
+                        selectedCity === cityNameInDb
+                          ? "bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600"
+                          : "bg-slate-800/60 border-slate-700 text-gray-300 hover:bg-slate-700"
+                      }
+                    >
+                      {getCityTranslation(cityKey, t)}
+                    </Button>
+                  )
+                })}
               </div>
             </div>
 
