@@ -54,6 +54,8 @@ export default function MapPage() {
   const [tourName, setTourName] = useState("")
   const [selectedCity, setSelectedCity] = useState<string | null>(null)
 
+  const categories = getCategoriesWithTranslations(t)
+
   useEffect(() => {
     const loadedPlaces = storage.getPlaces()
     const placesWithFallback = loadedPlaces.map((place) => ({
